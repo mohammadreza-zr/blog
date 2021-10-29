@@ -52,8 +52,8 @@ exports.rememberMe = (req, res) => {
 };
 
 exports.logout = (req, res) => {
+  req.session = null;
   req.logout();
-  req.flash("success_msg", "خروج موفقیت آمیز بود");
   res.redirect("/users/login");
 };
 

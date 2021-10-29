@@ -45,9 +45,10 @@ app.use(bodyParser.json());
 //* Session
 app.use(
   session({
-    secret: "secret",
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
+    unset: "destroy",
     store: MongoStore.create({ mongoUrl: process.env.MONGO_URI }),
   })
 );
@@ -68,11 +69,7 @@ app.use("/users", require("./routes/users"));
 app.use("/dashboard", require("./routes/dashboard"));
 
 //* 404
-app.use((req, res) => {
-  res
-    .status(404)
-    .render("404", { pageTitle: "صفحه پیدا نشد | 404", path: "/404" });
-});
+app.use(require("./controllers/errorController").get404);
 
 const PORT = process.env.PORT || 3000;
 

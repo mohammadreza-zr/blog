@@ -14,9 +14,12 @@
         <% if (path === '/404') { %>
             <link rel="stylesheet" href="/css/404.css">
         <% } %>
+        <% if (path === '/500') { %>
+            <link rel="stylesheet" href="/css/500.css">
+        <% } %>
         <title><%= pageTitle %> </title>
     </head>
-    <% if (path === '/404') { %>
+    <% if (path === '/404' || path === '/500') { %>
     <body>
         <% }else{ %>
             <body class="rtl">
@@ -24,5 +27,8 @@
         <%- body %>
         <script src="/js/jquery.slim.min.js"></script>
         <script src="/js/bootstrap.min.js"></script>
+        <% if (path === '/500') { %>
+         <script src="/js/500.js"></script>
+        <% } %>
     </body>
 </html>
