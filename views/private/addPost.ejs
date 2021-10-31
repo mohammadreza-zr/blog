@@ -3,7 +3,8 @@
     <div class="w-50 m-auto">
         <%- include ('../includes/validationErrors.ejs') %>
     </div>
-    <form action="/dashboard/add-post" method="post" class="form-group w-75 m-auto">
+    <form action="/dashboard/add-post" enctype="multipart/form-data"
+    method="post" class="form-group w-75 m-auto">
         <label for="selectedThumbnail">عکس بند انگشتی</label>
         <div class="custom-file mb-3">
             <input type="file" class="custom-file-input" name="thumbnail" id="selectedThumbnail" aria-describedby="inputGroupFileAddon03">

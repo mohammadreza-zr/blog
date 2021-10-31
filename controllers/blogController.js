@@ -40,7 +40,7 @@ exports.getSinglePost = async (req, res) => {
   try {
     const post = await Blog.findOne({ _id: req.params.id }).populate("user");
     if (!post) return res.redirect("errors/404");
-    let tags;
+    let tags = [];
     if (post.category.length > 0) {
       tags = post.category.split("-");
     }

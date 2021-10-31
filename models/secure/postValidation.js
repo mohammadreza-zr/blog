@@ -11,4 +11,12 @@ exports.schema = Yup.object().shape({
     ["public", "private"],
     "یکی از دو وضعیت خصوصی یا عمومی را انتخاب کنید"
   ),
+  thumbnail: Yup.object().shape({
+    name: Yup.string().required("عکس بند انگشتی الزامی می باشد"),
+    size: Yup.number().max(3000000, "عکس نباید بیشتر از 3 مگابایت باشد"),
+    mimetype: Yup.mixed().oneOf(
+      ["image/jpeg", "image/png"],
+      "تنها پسوند های png و gpeg پشتیبانی می شود"
+    ),
+  }),
 });

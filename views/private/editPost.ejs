@@ -3,7 +3,16 @@
     <div class="w-50 m-auto">
         <%- include ('../includes/validationErrors.ejs') %>
     </div>
-    <form action="/dashboard/edit-post/<%= post._id %> " method="post" class="form-group m-auto">
+    <form action="/dashboard/edit-post/<%= post._id %>" enctype="multipart/form-data" method="post" class="form-group m-auto">
+        <label for="selectedThumbnail">عکس بند انگشتی</label>
+        <img src="http://localhost:3000/uploads/thumbnails/<%= post.thumbnail %>"
+            alt="" class="img-thumbnail figure-img">
+            <div class="custom-file mb-3">
+                <input type="file" class="custom-file-input" name="thumbnail" id="selectedThumbnail" aria-describedby="inputGroupFileAddon03">
+                <label for="inputGroupFileon03" id="thumbStatus" class="custom-file-label">
+                    یک عکس انتخاب کن
+                </label>
+            </div>
         <div>
             <label for="title">عنوان</label>
         <input type="text" id="title" value="<%= post.title %> " name="title" class="form-control w-50">
@@ -44,6 +53,10 @@
                     <div id="progress" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
                 </div>
             </div>
+        </div>
+        <div>
+            <label for="category">تگ ها | دسته بندی ها</label>
+            <input type="text" id="category" name="category" value="<%= post.category %>" placeholder="دسته بندی مورد را وارد کرده و با - از یکدیگر جدا کنید" class="form-control">
         </div>
         <div class="mt-3">
             <label for="body">متن اصلی پست</label>
