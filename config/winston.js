@@ -5,7 +5,7 @@ console.log(appRoot.path);
 
 const options = {
   File: {
-    level: "info",
+    level: "error",
     filename: `${appRoot}/logs/app.log`,
     handleExceptions: true,
     format: winston.format.json(),
@@ -13,7 +13,7 @@ const options = {
     maxFile: 5,
   },
   console: {
-    level: "debug",
+    level: "error",
     handleExceptions: true,
     format: winston.format.combine(
       winston.format.colorize(),

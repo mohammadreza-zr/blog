@@ -1,15 +1,22 @@
 const multer = require("multer");
 const sharp = require("sharp");
-const uuid = require("uuid").v4;
+const shortId = require("shortid");
 
 const Blog = require("../models/blog");
 const { formatDate } = require("../utils/jalali");
 const { get500 } = require("./errorController");
-const { storage, fileFilter } = require("../utils/multer");
+const { fileFilter } = require("../utils/multer");
 
 exports.getDashboard = async (req, res) => {
+  const page = +req.query.page || 1;
+  const postPerPage = 2;
   try {
-    const blogs = await Blog.find({ user: req.user.id });
+    const numberOfPost = await Blog.find({
+      user: req.user._id,
+    }).countDocuments();
+    const blogs = await Blog.find({ user: req.user.id })
+      .skip((page - 1) * postPerPage)
+      .limit(postPerPage);
     res.render("private/blogs", {
       pageTitle: "بخش مدریت | داشبورد",
       path: "/dashboard",
@@ -17,6 +24,12 @@ exports.getDashboard = async (req, res) => {
       fullName: req.user.fullName,
       blogs,
       formatDate,
+      currentPage: page,
+      nextPage: page + 1,
+      previousPage: page - 1,
+      hasNextPage: postPerPage * page < numberOfPost,
+      hasPreviousPage: page > 1,
+      lastPage: Math.ceil(numberOfPost / postPerPage),
     });
   } catch (err) {
     console.log(err);
@@ -31,6 +44,83 @@ exports.getAddPost = (req, res) => {
     layout: "./layouts/dashLayout",
     fullName: req.user.fullName,
   });
+};
+
+exports.getEditPost = async (req, res) => {
+  const post = await Blog.findOne({
+    _id: req.params.id,
+  });
+  if (!post) {
+    return res.redirect("errors/404");
+  }
+  if (post.user.toString() != req.user._id) {
+    return res.redirect("/dashboard");
+  } else {
+    res.render("private/editPost", {
+      pageTitle: "بخش مدیریت | ویرایش پست",
+      path: "/dashboard/edit-post",
+      layout: "./layouts/dashLayout",
+      fullName: req.user.fullName,
+      post,
+    });
+  }
+};
+
+exports.editPost = async (req, res) => {
+  const errorArr = [];
+  const post = await Blog.findOne({ _id: req.params.id });
+  try {
+    await Blog.postValidation(req.body);
+
+    if (!post) {
+      return res.redirect("errors/404");
+    }
+    if (post.user.toString() != req.user._id) {
+      return res.redirect("/dashboard");
+    } else {
+      const { title, status, body } = req.body;
+      post.title = title;
+      post.status = status;
+      post.body = body;
+
+      await post.save();
+      return res.redirect("/dashboard");
+    }
+  } catch (err) {
+    console.log(err);
+    err.inner.forEach((e) => {
+      errorArr.push({
+        name: e.path,
+        message: e.message,
+      });
+    });
+    res.render("private/editPost", {
+      pageTitle: "بخش مدیریت | ویرایش پست",
+      path: "/dashboard/edit-post",
+      layout: "./layouts/dashLayout",
+      fullName: req.user.fullName,
+      errors: errorArr,
+      post,
+    });
+  }
+};
+
+exports.deletePost = async (req, res) => {
+  try {
+    const post = await Blog.findOne({ _id: req.params.id });
+    if (!post) {
+      return res.redirect("errors/404");
+    }
+    if (post.user.toString() != req.user._id) {
+      return res.redirect("/");
+    }
+    const result = await Blog.findByIdAndRemove(req.params.id);
+    console.log(result);
+    res.redirect("/dashboard");
+  } catch (err) {
+    console.log(err);
+    res.render("errors/500");
+  }
 };
 
 exports.createPost = async (req, res) => {
@@ -64,10 +154,13 @@ exports.uploadImage = (req, res) => {
   }).single("image");
   upload(req, res, async (err) => {
     if (err) {
+      if (err.code === "LIMIT_FILE_SIZE") {
+        return res.status(400).send("حجم عکس نباید بیشتر از 4 مگابایت باشد");
+      }
       res.send(err);
     } else {
       if (req.file) {
-        const fileName = `${uuid()}_${req.file.originalname}`;
+        const fileName = `${shortId.generate()}_${req.file.originalname}`;
         await sharp(req.file.buffer)
           .jpeg({
             quality: 60,

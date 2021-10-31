@@ -1,0 +1,18 @@
+<% if (posts.length > 0) { %>
+    <% for(post of posts) { %>
+        <!-- Featured blog post-->
+        <div class="card mb-4">
+            <a href="#!"><img class="card-img-top" src="https://dummyimage.com/850x350/dee2e6/6c757d.jpg" alt="..." /></a>
+            <div class="card-body">
+                <h2 class="card-title"><%= post.title %> </h2>
+                <p class="card-text"><%- truncate(post.body, 400) %> </p>
+                <span class="small text-muted">پست شده در تاریخ: <%= formatDate(post.createdAt) %> </span>
+                <a class="btn btn-primary" href="/post/<%= post.id %> ">ادامه →</a>
+            </div>
+        </div>
+    <% } %>
+<% }else{ %>
+    <div class="m-5 text-center">
+        <h2>هیچ پستی در پایگاه داده وجود ندارد</h2>
+    </div>
+<% } %>

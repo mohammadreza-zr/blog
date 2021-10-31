@@ -10,14 +10,23 @@ const blogSchema = mongoose.Schema({
     minlength: 3,
     maxlength: 100,
   },
+  category: {
+    type: String,
+    trim: true,
+    maxlength: 200,
+  },
   body: {
     type: String,
     required: true,
   },
   status: {
     type: String,
-    default: "عمومی",
-    enum: ["عمومی", "خصوصی"],
+    default: "public",
+    enum: ["public", "private"],
+  },
+  thumbnail: {
+    type: String,
+    required: true,
   },
   user: {
     type: mongoose.Schema.Types.ObjectId,

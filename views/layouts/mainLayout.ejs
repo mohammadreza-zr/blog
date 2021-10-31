@@ -17,6 +17,12 @@
         <% if (path === '/500') { %>
             <link rel="stylesheet" href="/css/500.css">
         <% } %>
+        <% if (path === '/') { %>
+        <link href="/css/indexStyles.css" rel="stylesheet" />
+        <% } %>
+        <% if (path === '/post') { %>
+            <link rel="stylesheet" href="/css/postStyles.css">
+        <% } %>
         <title><%= pageTitle %> </title>
     </head>
     <% if (path === '/404' || path === '/500') { %>
@@ -25,6 +31,7 @@
             <body class="rtl">
         <% } %>
         <%- body %>
+
         <script src="/js/jquery.slim.min.js"></script>
         <script src="/js/bootstrap.min.js"></script>
         <% if (path === '/500') { %>

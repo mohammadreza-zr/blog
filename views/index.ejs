@@ -1,1 +1,14 @@
+<!-- Responsive navbar-->
 <%- include ('./includes/navbar.ejs') %>
+<!-- Page content-->
+<div class="container">
+    <div class="row">
+        <!-- Blog entries-->
+        <div class="col">
+            <%- include ('./includes/blogPost.ejs') %>
+            <!-- Pagination-->
+            <%- include ('./includes/pagination.ejs') %>
+        </div>
+    </div>
+</div>
+<%- include ('./includes/footer.ejs') %>

@@ -4,12 +4,19 @@ $(document).ready(function () {
     progressBar = document.getElementById("progress"),
     progressDiv = document.getElementById("progressDiv"),
     imageUpload = document.getElementById("imageUpload"),
-    copy = document.getElementById("copy");
+    copy = document.getElementById("copy"),
+    thumbnail = document.getElementById("selectedThumbnail"),
+    thumbStatus = document.getElementById("thumbStatus");
 
   selectedImage.title = "فایلی انتخاب نشده است";
   selectedImage.addEventListener("change", () => {
     selectedImage.title = selectedImage.files[0].name;
     imageStatus.innerText = selectedImage.files[0].name;
+  });
+  thumbnail.title = "فایلی انتخاب نشده است";
+  thumbnail.addEventListener("change", () => {
+    thumbnail.title = thumbnail.files[0].name;
+    thumbStatus.innerText = thumbnail.files[0].name;
   });
   imageUpload.onclick = function () {
     let xhttp = new XMLHttpRequest(); // create new AJAX request
@@ -28,6 +35,7 @@ $(document).ready(function () {
           imageStatus.innerText = "در حال پردازش تصویر ....";
           progressDiv.style.display = "none";
           copy.style.display = "block";
+          selectedImage.value = "";
         }
       }
     };

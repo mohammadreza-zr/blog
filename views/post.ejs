@@ -1,0 +1,86 @@
+<% include ('./includes/navbar.ejs') %>
+<div class="container mt-5">
+    <div class="row">
+        <div class="col justify-content-center">
+            <!-- Post content-->
+            <article>
+                <!-- Post header-->
+                <header class="mb-4">
+                    <!-- Post title-->
+                    <h1 class="fw-bolder mb-1"><%- post.title %> </h1>
+                    <!-- Post meta content-->
+                    <div class="text-muted fst-italic mb-2">
+                        <p>
+                            نوشته شده توسط:
+                            <a href="/"><%- post.user.fullName %> </a>
+                        </p>
+                        <p>
+                            تاریخ انتشار:
+                            <%- formatDate(post.createdAt) %>
+                        </p>
+                    </div>
+                    <!-- Post categories-->
+                    <% if (tags.length>0) { %>
+                        <% for( let tag of tags ) { %>
+                            <a class="badge bg-secondary text-decoration-none link-light" href="#!"><%- tag %> </a>
+                        <% } %>
+                    <% } %>
+                </header>
+                <!-- Preview image figure-->
+                <figure class="mb-4"><img class="img-fluid rounded" src="https://dummyimage.com/900x400/ced4da/6c757d.jpg" alt="..." /></figure>
+                <!-- Post content-->
+                <section class="mb-5">
+                    <%- post.body %>
+                </section>
+            </article>
+            <!-- Comments section-->
+            <section class="mb-5">
+                <div class="card bg-light">
+                    <div class="card-body">
+                        <!-- Comment form-->
+                        <form class="mb-4">
+                            <label for="comment">نظر خود را بنویسید:</label>
+                            <textarea name="comment" id="comment" class="form-control" rows="3" placeholder="نظر خودتو با ما به اشتراک بزار!"></textarea>
+                            <button class="btn btn-primary mt-2" type="submit">ثبت نظر</button>
+                        </form>
+                        <hr>
+                        <!-- Comment with nested comments-->
+                        <div class="d-flex mb-4">
+                            <!-- Parent comment-->
+                            <div class="flex-shrink-0"><img class="rounded-circle" src="https://dummyimage.com/50x50/ced4da/6c757d.jpg" alt="..." /></div>
+                            <div class="ms-3">
+                                <div class="fw-bold">محمدرضا</div>
+                                این یک نظر است
+                                <!-- Child comment 1-->
+                                <div class="d-flex mt-4">
+                                    <div class="flex-shrink-0"><img class="rounded-circle" src="https://dummyimage.com/50x50/ced4da/6c757d.jpg" alt="..." /></div>
+                                    <div class="ms-3">
+                                        <div class="fw-bold">علی</div>
+                                        و این یک نظر دیگر
+                                    </div>
+                                </div>
+                                <!-- Child comment 2-->
+                                <div class="d-flex mt-4">
+                                    <div class="flex-shrink-0"><img class="rounded-circle" src="https://dummyimage.com/50x50/ced4da/6c757d.jpg" alt="..." /></div>
+                                    <div class="ms-3">
+                                        <div class="fw-bold">میثم</div>
+                                        نظر بعدی
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Single comment-->
+                        <div class="d-flex">
+                            <div class="flex-shrink-0"><img class="rounded-circle" src="https://dummyimage.com/50x50/ced4da/6c757d.jpg" alt="..." /></div>
+                            <div class="ms-3">
+                                <div class="fw-bold">پدرام</div>
+                                و در نهایت نظر اخر
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+<% include ('./includes/footer.ejs') %>
