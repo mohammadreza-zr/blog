@@ -1,0 +1,11 @@
+<form class="form-signin" action="/users/reset-password/<%= userId %> " method="post">
+    <h1 class="h3 mb-3 font-weight-normal">تغییر کلمه عبور</h1>
+    <%- include ('./includes/loginMessages.ejs') %>
+    <label for="password" class="sr-only">کلمه عبور جدید</label>
+    <input type="password" id="password" name="password" class="form-control mb-2"
+    placeholder="کلمه عبور جدید" required autofocus>
+    <label for="confirmPassword" class="sr-only">تکرار کلمه عبور</label>
+    <input type="password" id="confirmPassword" name="confirmPassword" class="form-control mb-2"
+    placeholder="تکرار کلمه عبور" required>
+    <button class="btn btn-lg btn-primary btn-block" type="submit">ثبت</button>
+</form>

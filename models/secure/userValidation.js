@@ -16,3 +16,8 @@ exports.schema = Yup.object().shape({
     .required("تکرار کلمه عبور الزامی می باشد")
     .oneOf([Yup.ref("password"), null], "تکرار کلمه عبور تطابق ندارد"),
 });
+exports.validateEmail = Yup.object().shape({
+  email: Yup.string()
+    .email("ایمیل وارد شده معتبر نمی باشد")
+    .required("ایمیل الزامی می باشد"),
+});
