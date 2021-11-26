@@ -208,3 +208,37 @@ exports.uploadImage = (req, res) => {
     }
   });
 };
+
+exports.handleDashSearch = async (req, res) => {
+  const page = +req.query.page || 1;
+  const postPerPage = 2;
+  try {
+    const numberOfPost = await Blog.find({
+      user: req.user._id,
+      $text: { $search: req.body.search },
+    }).countDocuments();
+    const blogs = await Blog.find({
+      user: req.user.id,
+      $text: { $search: req.body.search },
+    })
+      .skip((page - 1) * postPerPage)
+      .limit(postPerPage);
+    res.render("private/blogs", {
+      pageTitle: "بخش مدریت | داشبورد",
+      path: "/dashboard",
+      layout: "./layouts/dashLayout",
+      fullName: req.user.fullName,
+      blogs,
+      formatDate,
+      currentPage: page,
+      nextPage: page + 1,
+      previousPage: page - 1,
+      hasNextPage: postPerPage * page < numberOfPost,
+      hasPreviousPage: page > 1,
+      lastPage: Math.ceil(numberOfPost / postPerPage),
+    });
+  } catch (err) {
+    console.log(err);
+    get500(req, res);
+  }
+};

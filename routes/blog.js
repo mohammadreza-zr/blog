@@ -16,8 +16,16 @@ router.get("/post/:id", blogController.getSinglePost);
 // @route GET /contact
 router.get("/contact", blogController.getContactPage);
 
+// @desc Weblog Numeric Captcha
+// @route GET /captcha.png
+router.get("/captcha.png", blogController.getCaptcha);
+
 // @desc Handle Concat Page
 // @route Post /contact
 router.post("/contact", blogController.handleContactPage);
+
+// @desc Weblog Handle Search
+// @route GET /search
+router.post("/search", blogController.handleSearch);
 
 module.exports = router;

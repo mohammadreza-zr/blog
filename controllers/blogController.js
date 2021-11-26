@@ -1,10 +1,13 @@
 const ObjectId = require("mongoose").ObjectId;
 const Yup = require("yup");
+const captchapng = require("captchapng");
 
 const Blog = require("../models/blog");
 const { formatDate } = require("../utils/jalali");
 const { truncate } = require("../utils/helpers");
 const { sendEmail } = require("../utils/mailer");
+
+let CAPTCHA_NUM;
 
 exports.getIndex = async (req, res) => {
   const page = +req.query.page || 1;
@@ -34,7 +37,9 @@ exports.getIndex = async (req, res) => {
     });
   } catch (err) {
     console.log(err);
-    res.render("errors/500");
+    res.render("errors/500", {
+      pageTitle: "ارور 500",
+    });
   }
 };
 
@@ -68,6 +73,7 @@ exports.getContactPage = (req, res) => {
     errors: [],
   });
 };
+
 exports.handleContactPage = async (req, res) => {
   const errorArr = [];
 
@@ -82,15 +88,26 @@ exports.handleContactPage = async (req, res) => {
   });
   try {
     await schema.validate(req.body, { abortEarly: false });
-    //todo captcha validation
-    sendEmail(
-      email,
-      fullName,
-      "پیام از طرف وبلاگ",
-      `${message} <br/> ایمیل کاربر: <br/> ${email}`,
-      "پیام"
-    );
-    req.flash("success_msg", "پیام شما با موفقیت ارسال شد");
+
+    if (parseInt(captcha) === CAPTCHA_NUM) {
+      sendEmail(
+        email,
+        fullName,
+        "پیام از طرف وبلاگ",
+        `${message} <br/> ایمیل کاربر: <br/> ${email}`,
+        "پیام"
+      );
+      req.flash("success_msg", "پیام شما با موفقیت ارسال شد");
+      return res.render("contact", {
+        pageTitle: "تماس با ما",
+        path: "/contact",
+        message: req.flash("success_msg"),
+        error: req.flash("error"),
+        errors: errorArr,
+      });
+    }
+
+    req.flash("error", "کد امنیتی صحیح نیست");
     res.render("contact", {
       pageTitle: "تماس با ما",
       path: "/contact",
@@ -111,6 +128,55 @@ exports.handleContactPage = async (req, res) => {
       message: req.flash("success_msg"),
       error: req.flash("error"),
       errors: errorArr,
+    });
+  }
+};
+
+exports.getCaptcha = (req, res) => {
+  CAPTCHA_NUM = parseInt(Math.random() * 9000 + 1000);
+  const p = new captchapng(80, 30, CAPTCHA_NUM);
+  p.color(0, 0, 0, 0);
+  p.color(80, 80, 80, 255);
+  const img = p.getBase64();
+  const imgBase64 = Buffer.from(img, "base64");
+  res.send(imgBase64);
+};
+
+exports.handleSearch = async (req, res) => {
+  const page = +req.query.page || 1;
+  const postPerPage = 5;
+  try {
+    const numberOfPost = await Blog.find({
+      status: "public",
+      $text: { $search: req.body.search },
+    }).countDocuments();
+    const posts = await Blog.find({
+      status: "public",
+      $text: { $search: req.body.search },
+    })
+      .sort({
+        createdAt: "desc",
+      })
+      .skip((page - 1) * postPerPage)
+      .limit(postPerPage);
+    res.render("index", {
+      pageTitle: "نتایج جستجوی شما",
+      path: "/",
+      posts,
+      formatDate,
+      truncate,
+      currentPage: page,
+      nextPage: page + 1,
+      previousPage: page - 1,
+      hasNextPage: postPerPage * page < numberOfPost,
+      hasPreviousPage: page > 1,
+      lastPage: Math.ceil(numberOfPost / postPerPage),
+    });
+  } catch (err) {
+    console.log(err);
+    res.render("errors/500", {
+      pageTitle: "ارور 500",
+      path: "/404",
     });
   }
 };
